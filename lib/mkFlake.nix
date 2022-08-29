@@ -13,6 +13,7 @@
     extraArgs = { };
   }
 , outputsBuilder ? _: { }
+, extend ? _: _: { }
 , ...
 }@args:
 
@@ -23,7 +24,9 @@ let
     patchChannel
     ;
   inherit (flake-utils-plus.lib.internal)
+    extends
     filterAttrs
+    fix
     partitionString
     reverseList
     ;
@@ -194,8 +197,9 @@ let
     }
   );
 
+
 in
-mergeAny otherArguments (
+fix (extends extend (_: mergeAny otherArguments (
 
   eachSystem supportedSystems
     (system:
@@ -240,4 +244,4 @@ mergeAny otherArguments (
   # { nixosConfigurations = {}; darwinConfigurations = {};  ... }
   # according to profile.output or the default `nixosConfigurations`
   // foldl' mergeAny { } (attrValues (mapAttrs configurationBuilder hosts))
-)
+)))

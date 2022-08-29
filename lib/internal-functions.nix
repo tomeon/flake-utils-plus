@@ -1,7 +1,13 @@
 with builtins;
 rec {
+  # Definition in nixpkgs
+  extends = f: rattrs: self: let super = rattrs self; in super // f self super;
+
   filterAttrs = pred: set:
     listToAttrs (concatMap (name: let value = set.${name}; in if pred name value then [ ({ inherit name value; }) ] else [ ]) (attrNames set));
+
+  # Definition in nixpkgs
+  fix = f: let x = f x; in x;
 
   /* Generate an attribute set by mapping a function over a list of
     attribute names.
